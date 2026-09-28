@@ -20,15 +20,16 @@ importers:
 
   apps/http-backend:
     dependencies:
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1(supports-color@7.2.0)
+    devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
-      express:
-        specifier: ^5.2.1
-        version: 5.2.1(supports-color@7.2.0)
 
   apps/web:
     dependencies:
@@ -69,15 +70,16 @@ importers:
 
   apps/ws-backend:
     dependencies:
+      ws:
+        specifier: ^8.22.0
+        version: 8.22.0
+    devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
-      ws:
-        specifier: ^8.22.0
-        version: 8.22.0
 
   packages/eslint-config:
     devDependencies:
