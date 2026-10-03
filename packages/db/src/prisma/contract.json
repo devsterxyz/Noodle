@@ -191,7 +191,7 @@
           "User": {
             "fields": {
               "avatar": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -452,7 +452,7 @@
                 "avatar": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "email": {
                   "codecId": "pg/text@1",
@@ -490,7 +490,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2397212b9bcb398501b955225783c178f4fb05e37dff97fc3743d7765c82c60f"
+    "storageHash": "b59b9a0674d1c0331680faeb7c8947177fedc4fc5222238cc53da0c4bdc92078"
   },
   "execution": {
     "executionHash": "6af348abd699e1b0a0e911a7d2da008ff3a1d475a3fb1b36540365f78ad570d0",
