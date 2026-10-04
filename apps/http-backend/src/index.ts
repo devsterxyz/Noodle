@@ -78,7 +78,7 @@ app.post("/signin", async(req, res)=>{
 app.post("/room", middleware, async(req, res)=>{
   const parsedData = CreateRoomSchema.safeParse(req.body)
   if(!parsedData.success){
-    res.json({
+    res.status(400).json({
       message: "Incorrect input"
     })
     return
@@ -87,16 +87,25 @@ app.post("/room", middleware, async(req, res)=>{
    // @ts-ignore: TODO: fix this??
   const userId = req.userId
 
-  await Room.create({
-    data:{
+  try {
+    const room = await Room.select("id").create({
       slug: parsedData.data.name,
       adminId: userId
-    }
-  })
+    })
 
-  res.json({
-    roomId: 123
-  })
+    res.json({ roomId: room.id })
+  }
+  catch (error: unknown) {
+    console.error("Room creation failed:", error)
+
+    if (typeof error === "object" && error !== null &&
+        "sqlState" in error && error.sqlState === "23505") {
+      res.status(409).json({ message: "Room already exists" })
+      return
+    }
+
+    res.status(500).json({ message: "Could not create room" })
+  }
 })
 
 app.listen(3001)  
