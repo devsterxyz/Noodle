@@ -3,14 +3,16 @@ import jwt from "jsonwebtoken"
 import { JWT_SECRET } from "@repo/backend-common/config";
 import { middleware } from "./middleware"
 import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types"
-import { User } from "@repo/db/client"
+import { User, Room } from "@repo/db/client"
 
 const app = express()
+app.use(express.json())
 
 app.post("/signup", async (req, res)=>{
 
   const parsedData = CreateUserSchema.safeParse(req.body)
   if(!parsedData.success){
+    console.log(parsedData.error)
     res.status(400).json({
       message: "Incorrect input"
     })
@@ -20,35 +22,52 @@ app.post("/signup", async (req, res)=>{
   try {
     const user = await User.create({
       email: parsedData.data.username,
+      // TODO: Hash the password before storing it in the database
       password: parsedData.data.password,
       name: parsedData.data.name,
     })
 
     res.json({ userId: user.id })
   }
-  catch(e){
-    res.status(409).json({ message: "User already exists" })
-  }
-  // db call
+  catch (error: unknown) {
+    console.error("Signup failed:", error)
 
-  res.json({
-    userId: "123"
-  })
+    // PostgreSQL uses SQLSTATE 23505 for a unique-constraint violation.
+    if (typeof error === "object" && error !== null &&
+        "sqlState" in error && error.sqlState === "23505") {
+      res.status(409).json({ message: "User already exists" })
+      return
+    }
+
+    res.status(500).json({ message: "Could not create user" })
+  }
 })
 
-app.post("/signin", (req, res)=>{
+app.post("/signin", async(req, res)=>{
   
-  const data = SigninSchema.safeParse(req.body)
-  if(!data.success){
+  const parsedData = SigninSchema.safeParse(req.body)
+  if(!parsedData.success){
     res.json({
       message: "Incorrect input"
     })
     return
   }
 
-  const userId = 1;
+  // TODO: Compare the hash pasword here
+  const user = await User.first({
+    email: parsedData.data.username,
+    password: parsedData.data.password
+  })
+
+  if(!user){
+    res.json(403).json({
+      message: "Not authrized"
+    })
+    return
+  }
+
   const token = jwt.sign({
-    userId
+    userId: user?.id
   }, JWT_SECRET)
 
   res.json({
@@ -56,17 +75,24 @@ app.post("/signin", (req, res)=>{
   })
 })
 
-app.post("/room", middleware, (req, res)=>{
-  const data = CreateRoomSchema.safeParse(req.body)
-  if(!data.success){
+app.post("/room", middleware, async(req, res)=>{
+  const parsedData = CreateRoomSchema.safeParse(req.body)
+  if(!parsedData.success){
     res.json({
       message: "Incorrect input"
     })
     return
   }
 
+   // @ts-ignore: TODO: fix this??
+  const userId = req.userId
 
-  // db call
+  await Room.create({
+    data:{
+      slug: parsedData.data.name,
+      adminId: userId
+    }
+  })
 
   res.json({
     roomId: 123
