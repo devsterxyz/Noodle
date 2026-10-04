@@ -13,17 +13,23 @@ interface User{
 const users: User[] = []
 
 function checkUser(token: string): string | null {
-  const decoded = jwt.verify(token, JWT_SECRET)
+  try{
+    const decoded = jwt.verify(token, JWT_SECRET)
 
-  if(typeof decoded === 'string'){
+    if(typeof decoded === 'string'){
+      return null
+    }
+
+    if(!decoded || !decoded.userId){
+      return null
+    }
+
+    return decoded.userId
+  }
+  catch(e){
     return null
   }
-
-  if(!decoded || !decoded.userId){
-    return null
-  }
-
-  return decoded.userId
+  return null
 }
 
 wss.on('connection', function connection(ws, request){
@@ -51,7 +57,7 @@ wss.on('connection', function connection(ws, request){
   ws.on('message', function message(data){
     const parsedData = JSON.parse(data as unknown as string)
 
-    if(parsedData.type === "Join_room"){
+    if(parsedData.type === "join_room"){
       const user = users.find(x => x.ws === ws)
       user?.rooms.push(parsedData.roomId)
     }
