@@ -121,4 +121,15 @@ app.get("/chats/:roomId", async (req, res) => {
   })
 })
 
+app.get("/rooms/:slug", async (req, res) => {
+  const slug = Number(req.params.slug)
+  const room = await Room.where({
+    slug
+  })
+
+  res.json({
+    room
+  })
+})
+
 app.listen(3001)  
