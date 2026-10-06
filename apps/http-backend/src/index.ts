@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 import { JWT_SECRET } from "@repo/backend-common/config";
 import { middleware } from "./middleware"
 import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types"
-import { User, Room } from "@repo/db/client"
+import { User, Room, Chat } from "@repo/db/client"
 
 const app = express()
 app.use(express.json())
@@ -60,8 +60,8 @@ app.post("/signin", async(req, res)=>{
   })
 
   if(!user){
-    res.json(403).json({
-      message: "Not authrized"
+    res.status(403).json({
+      message: "Not authorized"
     })
     return
   }
@@ -106,6 +106,19 @@ app.post("/room", middleware, async(req, res)=>{
 
     res.status(500).json({ message: "Could not create room" })
   }
+})
+
+app.get("/chats/:roomId", async (req, res) => {
+  const roomId = Number(req.params.roomId)
+  const messages = await Chat
+    .where({ roomId })
+    .orderBy((chat) => chat.id.desc())
+    .limit(50)
+    .all()
+
+  res.json({
+    messages
+  })
 })
 
 app.listen(3001)  
