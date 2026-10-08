@@ -29,7 +29,7 @@ export default function Home() {
         <button style={{
           padding: 10
         }} onClick={() => {
-          router.push(`/room/${roomId}`)
+          router.push(`/rooms/${roomId}`)
         }}>Join Room</button>
       </div>
     </div>

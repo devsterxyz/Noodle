@@ -131,15 +131,22 @@ app.get("/chats/:roomId", async (req, res) => {
   
 })
 
-app.get("/rooms/:slug", async (req, res) => {
-  const slug = Number(req.params.slug)
-  const room = await Room.where({
-    slug
-  })
+app.get("/room/:slug", async (req, res) => {
+  const slug = req.params.slug
 
-  res.json({
-    room
-  })
+  try {
+    const room = await Room.first({ slug })
+
+    if (!room) {
+      res.status(404).json({ message: "Room not found" })
+      return
+    }
+
+    res.json({ id: room.id })
+  } catch (error) {
+    console.error("Room lookup failed:", error)
+    res.status(500).json({ message: "Could not fetch room" })
+  }
 })
 
 app.listen(3001)  
