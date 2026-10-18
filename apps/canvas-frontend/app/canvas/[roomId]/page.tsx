@@ -16,7 +16,6 @@ export default function Canvas(){
   return (
     <div>
       <canvas ref={canvasRef} width={2000} height={1000}>
-
       </canvas>
     </div>
   )
