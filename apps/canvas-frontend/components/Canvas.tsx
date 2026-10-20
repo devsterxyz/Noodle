@@ -1,42 +1,28 @@
-"use client"
-
-import { WS_URL } from "@/config"
 import { initDraw } from "@/draw"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
-export function CanvasPage ({roomId}: {
+
+export function Canvas ({
+  roomId,
+  socket
+}: {
   roomId: string
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [socket, setSocket] = useState<WebSocket | null>(null)
+  socket: WebSocket
+}){
 
-  useEffect(() => {
-    const ws = new WebSocket(WS_URL)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
-    ws.onopen = () => {
-      setSocket(ws)
-    }
-  }, [])
-
-  useEffect(() => {
+   useEffect(() => {
 
     if(canvasRef.current){
-      initDraw(canvasRef.current, roomId)
+      initDraw(canvasRef.current, roomId, socket)
     }
 
   }, [canvasRef])
 
-  if(!socket){
-    return(
-      <div>
-        connecting to the server.....
-      </div>
-    )
-  }
   return (
     <div>
-      <canvas ref={canvasRef} width={2000} height={1000}>
-      </canvas>
+      <canvas ref={canvasRef} width={2000} height={1000}></canvas>
     </div>
   )
 }
