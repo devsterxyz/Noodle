@@ -82,5 +82,5 @@ async function getExistingShapes(roomId: string){
     const messageData = JSON.parse(x.message)
     return messageData
   })
-  return shapes
+  return shapes 
 }
