@@ -17,6 +17,11 @@ export function Canvas({
   const [selectedTool, setSelectedTool] = useState<Shape>("circle")
 
   useEffect(() => {
+    //@ts-ignore
+    window.selectedTool = selectedTool
+  }, [selectedTool])
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -67,9 +72,29 @@ function TopBar({selectedTool, setSelectedTool} : {
         left: 10
       }}>
         <div className="flex gap-t">
-          <IconButton activated={selectedTool === "pencil"} icon={<Pencil />} onClick={() => {}}></IconButton>
-          <IconButton activated={selectedTool === "rect"} icon={<RectangleHorizontalIcon />} onClick={() => {}}></IconButton>
-          <IconButton activated={selectedTool === "circle"} icon={<Circle />} onClick={() => {}}></IconButton>
+          <IconButton 
+            activated={selectedTool === "pencil"} 
+            icon={<Pencil />} 
+            onClick={() => {
+              setSelectedTool("pencil")
+            }}>
+          </IconButton>
+
+          <IconButton 
+            activated={selectedTool === "rect"} 
+            icon={<RectangleHorizontalIcon />} 
+            onClick={() => {
+              setSelectedTool("rect")
+            }}>
+          </IconButton>
+          
+          <IconButton 
+            activated={selectedTool === "circle"} 
+            icon={<Circle />} 
+            onClick={() => {
+              setSelectedTool("circle")
+            }}>
+          </IconButton>
         </div>
     </div>
   )
