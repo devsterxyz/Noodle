@@ -39,9 +39,10 @@ export function Canvas({
     setGame(g)
 
     return () => {
+      g.destory()
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, [roomId, socket]);
+  }, [roomId, socket, canvasRef]);
 
   return (
     <div style={{
