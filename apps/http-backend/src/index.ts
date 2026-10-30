@@ -116,7 +116,7 @@ app.get("/chats/:roomId", async (req, res) => {
     const messages = await Chat
       .where({ roomId })
       .orderBy((chat) => chat.id.desc())
-      .limit(50)
+      .limit(1000)
       .all()
 
     res.json({
